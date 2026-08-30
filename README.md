@@ -1,0 +1,1 @@
+npm install @supabase/supabase-js react-native-url-polyfill --legacy-peer-deps
