@@ -132,7 +132,7 @@ export default function CadastrarScreen() {
       );
     } catch (err) {
       // DICA: sempre trate o erro mostrando algo para o usuário — nunca deixe
-      // a tela "travada" sem explicação caso o Supabase recuse a operação.
+      // a tela "travada" sem explicação caso o Turso recuse a operação.
       const mensagem = err instanceof Error ? err.message : 'Erro desconhecido';
       Alert.alert('Erro ao salvar', mensagem);
     } finally {

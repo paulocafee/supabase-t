@@ -1,6 +1,6 @@
 /**
  * LOCALIZAÇÃO: src/app/consultar.tsx
- * PROPÓSITO: Tela 3 - Consulta de Cadastros (agora buscando os dados de verdade no Supabase).
+ * PROPÓSITO: Tela 3 - Consulta de Cadastros (agora buscando os dados de verdade no Turso).
  *
  * ONDE VÃO AS AÇÕES DESTA TELA:
  * - Buscar a lista:  Função `carregarContatos()`  -> chama `listarContatos()` do service.
@@ -25,7 +25,7 @@ import { listarContatos, excluirContato } from '@/services/contatos';
 
 /**
  * Componente ConsultarScreen
- * Renderiza a lista de registros cadastrados (vindos do Supabase) com opções
+ * Renderiza a lista de registros cadastrados (vindos do Turso) com opções
  * de visualização, edição e exclusão.
  */
 export default function ConsultarScreen() {
@@ -34,7 +34,7 @@ export default function ConsultarScreen() {
   // Lista de contatos exibida na tela. Começa vazia até a busca terminar.
   const [cadastros, setCadastros] = useState<Cadastro[]>([]);
 
-  // Controla o "carregando..." exibido enquanto buscamos os dados no Supabase.
+  // Controla o "carregando..." exibido enquanto buscamos os dados no Turso.
   const [carregando, setCarregando] = useState(true);
 
   // Guarda uma mensagem de erro, caso a busca no banco falhe (ex: sem internet).
@@ -42,7 +42,7 @@ export default function ConsultarScreen() {
 
   /**
    * Função carregarContatos
-   * Busca a lista de contatos no Supabase (através do service `contatos.ts`)
+   * Busca a lista de contatos no Turso (através do service `contatos.ts`)
    * e atualiza o estado da tela.
    *
    * DICA: essa é a função que você deve chamar de novo sempre que quiser
@@ -91,7 +91,7 @@ export default function ConsultarScreen() {
   /**
    * Função handleExcluir
    * Pergunta se o usuário tem certeza e, se confirmado, chama `excluirContato`
-   * no Supabase. Assim que o banco confirma a exclusão, atualizamos a lista
+   * no Turso. Assim que o banco confirma a exclusão, atualizamos a lista
    * na tela removendo o item (sem precisar recarregar tudo de novo).
    */
   const handleExcluir = (id: string) => {
