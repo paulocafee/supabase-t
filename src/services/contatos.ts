@@ -52,31 +52,17 @@ function converterLinhaParaCadastro(linha: LinhaDaTabelaContacts): Cadastro {
   };
 }
 
-// A tabela 'contacts' já existe no banco Turso, então só garantimos a sua
-// existência (caso rode em outro ambiente/banco) sem depender de created_at.
-let tabelaPronta: Promise<void> | null = null;
-function garantirTabela(): Promise<void> {
-  if (!tabelaPronta) {
-    tabelaPronta = turso
-      .execute(
-        `CREATE TABLE IF NOT EXISTS ${NOME_DA_TABELA} (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          name TEXT NOT NULL,
-          email TEXT NOT NULL,
-          phone TEXT NOT NULL
-        )`
-      )
-      .then(() => undefined);
-  }
-  return tabelaPronta;
-}
-
 /**
  * 1) LISTAR (Consultar todos os contatos)
  * USADA EM: src/app/consultar.tsx
+ * 
+ * 1. resultado.rows[0]: Pega o primeiro item (registro) do array de resultados retornado pela consulta SQL.
+ * 2. as unknown: "Limpa" o tipo original do Turso (que vem como um tipo genérico 'Row' ou 'any') 
+ * para evitar que o TypeScript reclame de incompatibilidade direta de tipos.
+ * 3. as LinhaDaTabelaContacts: Força o TypeScript a entender e tratar aquele objeto com a estrutura 
+ * da interface 'LinhaDaTabelaContacts' (com os campos id, name, email e phone).
  */
 export async function listarContatos(): Promise<Cadastro[]> {
-  await garantirTabela();
 
   const resultado = await turso.execute(
     `SELECT * FROM ${NOME_DA_TABELA} ORDER BY id DESC`
@@ -91,7 +77,6 @@ export async function listarContatos(): Promise<Cadastro[]> {
  * USADA EM: src/app/cadastrar.tsx (botão "Salvar Cadastro")
  */
 export async function criarContato(dados: DadosDoFormulario): Promise<Cadastro> {
-  await garantirTabela();
 
   const resultado = await turso.execute({
     sql: `INSERT INTO ${NOME_DA_TABELA} (name, email, phone) VALUES (?, ?, ?) RETURNING *`,
@@ -107,7 +92,6 @@ export async function criarContato(dados: DadosDoFormulario): Promise<Cadastro> 
  * USADA EM: src/app/cadastrar.tsx (modo edição)
  */
 export async function atualizarContato(id: string, dados: DadosDoFormulario): Promise<Cadastro> {
-  await garantirTabela();
 
   const resultado = await turso.execute({
     sql: `UPDATE ${NOME_DA_TABELA} SET name = ?, email = ?, phone = ? WHERE id = ? RETURNING *`,
@@ -127,7 +111,6 @@ export async function atualizarContato(id: string, dados: DadosDoFormulario): Pr
  * USADA EM: src/app/consultar.tsx (botão "Excluir" de cada item da lista)
  */
 export async function excluirContato(id: string): Promise<void> {
-  await garantirTabela();
 
   await turso.execute({
     sql: `DELETE FROM ${NOME_DA_TABELA} WHERE id = ?`,
@@ -139,7 +122,6 @@ export async function excluirContato(id: string): Promise<void> {
  * 5) BUSCAR UM ÚNICO CONTATO (bônus)
  */
 export async function buscarContatoPorId(id: string): Promise<Cadastro> {
-  await garantirTabela();
 
   const resultado = await turso.execute({
     sql: `SELECT * FROM ${NOME_DA_TABELA} WHERE id = ?`,
